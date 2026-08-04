@@ -1,44 +1,33 @@
 name: BMS Ticket Checker
 
 on:
-  schedule:
-    # Every 30 minutes
-    - cron: '*/30 * * * *'
-  workflow_dispatch:  # Manual trigger button
+  workflow_dispatch:
 
 jobs:
-  check-tickets:
+  playwright-validation:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v7
         with:
-          python-version: '3.14'
+          python-version: "3.14"
 
       - name: Install dependencies
-        run: uv sync --frozen
+        run: uv sync
 
-      - name: Run checker
-        env:
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          RESEND_TO_EMAIL: ${{ secrets.RESEND_TO_EMAIL }}
-          RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
-          BMS_URL: ${{ vars.BMS_URL }}
-          BMS_DATES: ${{ vars.BMS_DATES }}
-          BMS_THEATRE: ${{ vars.BMS_THEATRE }}
-          BMS_TIME: ${{ vars.BMS_TIME }}
-        run: uv run main.py
-
-      - name: Commit updated state
+      - name: Install Chromium
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add bms_state.json
-          git diff --cached --quiet || (git commit -m "chore: update bms_state.json [skip ci]" && git push)
+          uv run playwright install chromium
+          uv run playwright install-deps chromium
+
+      - name: Run Playwright
+        env:
+          HEADLESS: "true"
+          BMS_URL: ${{ vars.BMS_URL }}
+        run: |
+          uv run playwright_fetch.py

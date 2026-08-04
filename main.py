@@ -169,13 +169,28 @@ def fetch_bms(event_code, date_code, region_code, region_slug,
         "lat": lat, "lon": lon,
     }
     try:
-        resp = requests.get(API_URL, headers=headers,
-                            params=params, timeout=15)
-        if resp.status_code == 200:
-            return resp.json()
+        print("\n===== REQUEST =====")
+        print("Headers:", headers)
+        print("Params:", params)
+        resp = requests.get(
+            API_URL,
+            headers=headers,
+            params=params,
+            timeout=15,
+        )
+
         print(f"  HTTP {resp.status_code}")
+
+        if resp.status_code == 200:
+            with open("response.json", "w", encoding="utf-8") as f:
+                f.write(resp.text)
+
+            print("Saved response.json")
+            return resp.json()
+
     except requests.RequestException as e:
         print(f"  Request failed: {e}")
+
     return None
 
 

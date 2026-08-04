@@ -1,9 +1,11 @@
 [project]
 name = "bms-ticket-notifier"
 version = "0.1.0"
-description = "Add your description here"
+description = "BookMyShow Playwright notifier"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "requests>=2.32.5",
+    "playwright>=1.54.0",
+    "beautifulsoup4>=4.13.0",
+    "lxml>=6.0.0",
 ]
