@@ -182,9 +182,10 @@ def fetch_bms(event_code, date_code, region_code, region_slug,
         print(f"  HTTP {resp.status_code}")
 
         if resp.status_code == 200:
-            print("\n===== RAW API RESPONSE =====")
-            print(resp.text[:3000])
-            print("===== END RESPONSE =====\n")
+            with open("response.json", "w", encoding="utf-8") as f:
+                f.write(resp.text)
+
+            print("Saved response.json")
             return resp.json()
 
     except requests.RequestException as e:
