@@ -169,6 +169,9 @@ def fetch_bms(event_code, date_code, region_code, region_slug,
         "lat": lat, "lon": lon,
     }
     try:
+        print("\n===== REQUEST =====")
+        print("Headers:", headers)
+        print("Params:", params)
         resp = requests.get(
             API_URL,
             headers=headers,
